@@ -1,0 +1,42 @@
+<div class="container">
+    <!-- page title -->
+    <h1 class="my-5 text-center">CATEGORIES PAGE</h1>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3 d-flex flex-column align-items-center">
+            <!-- spinner -->
+            <mat-spinner *ngIf="isLoading$ | async" diameter="50"></mat-spinner> <!-- Observables must come with `| async` pipe !!! -->
+
+            <!-- categories list -->
+            <div class="w-100" *ngIf="!(isLoading$ | async) && (categories$ | async)">
+                <mat-selection-list class="w-100" [multiple]="false">
+                    <mat-list-option *ngFor="let category of (categories$ | async)">
+                        <div class="d-flex justify-content-between w-100">
+                            <p>{{category.name}}</p>
+                            <div>
+                                <mat-icon (click)="deleteCategory(category.id)" *ngIf="(user$ | async) && (user$ | async).isAdmin === 'true'">delete</mat-icon>
+                                <mat-icon routerLink="/categories/{{category.id}}" *ngIf="(user$ | async) && (user$ | async).isAdmin === 'true'">edit</mat-icon>
+                                <mat-icon 
+                                    routerLink="/categories/{{category.id}}" 
+                                    *ngIf="((user$ | async) && (user$ | async).isAdmin === 'false') || (!(user$ | async)) "
+                                >remove_red_eye</mat-icon>
+                            </div>
+                        </div>
+                    </mat-list-option>
+                </mat-selection-list>
+
+                <!-- add button -->
+                <ng-container *ngIf="(user$ | async)">
+                    <button *ngIf="(user$ | async).isAdmin === 'true'" mat-fab routerLink="/categories/create" style="background: #333; position: fixed; bottom: 2rem; right: 2rem;">
+                        New
+                    </button>
+                </ng-container>
+
+                <!-- error -->
+                <div class="alert alert-dark text-center mt-5" role="alert" *ngIf="(error$ | async)">
+                    {{(error$ | async)}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

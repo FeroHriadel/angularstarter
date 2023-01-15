@@ -1,0 +1,5 @@
+<mat-toolbar class="d-flex justify-content-between">
+    <h1 [routerLink]="['/']" class="pointer">Navbar</h1>
+    <button *ngIf="!(isLoggedIn$ | async)" mat-stroked-button routerLink="/signin">Log in</button>
+    <button *ngIf="(isLoggedIn$ | async)" mat-stroked-button (click)="signOut()">Sign out</button>
+</mat-toolbar>

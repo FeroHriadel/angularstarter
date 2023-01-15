@@ -1,0 +1,56 @@
+<div class="container">
+    <!-- page title -->
+    <h1 class="my-5 text-center">TAGS PAGE</h1>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3 d-flex flex-column align-items-center">
+            <!-- spinner -->
+            <mat-spinner *ngIf="isLoading$ | async" diameter="50"></mat-spinner> 
+
+            <!-- tags list -->
+            <div class="w-100" *ngIf="!(isLoading$ | async) && (tags$ | async)">
+                <mat-selection-list class="w-100" [multiple]="false">
+                    <mat-list-option *ngFor="let tag of (tags$ | async)" class="m-2">
+                        <div class="d-flex justify-content-between w-100 align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div 
+                                    *ngIf="tag.imageUrl && tag.imageUrl !== ''" 
+                                    class="tag-circle" 
+                                    style="background: url({{tag.imageUrl}}) no-repeat center center/cover;">
+                                </div>
+                                <div 
+                                    *ngIf="!tag.imageUrl || tag.imageUrl === ''" 
+                                    class="tag-circle"
+                                >
+                                    <span>{{tag.name}}</span>
+                                </div>
+
+                                <span class="mx-2">{{tag.name}}</span>
+                            </div>
+                            <div>
+                                <mat-icon (click)="deleteTag(tag.id)" *ngIf="(user$ | async) && (user$ | async).isAdmin === 'true'">delete</mat-icon>
+                                <mat-icon routerLink="/tags/{{tag.id}}" *ngIf="(user$ | async) && (user$ | async).isAdmin === 'true'">edit</mat-icon>
+                                <mat-icon 
+                                    routerLink="/tags/{{tag.id}}" 
+                                    *ngIf="((user$ | async) && (user$ | async).isAdmin === 'false') || (!(user$ | async)) "
+                                >remove_red_eye</mat-icon>
+                            </div>
+                        </div>
+                    </mat-list-option>
+                </mat-selection-list>
+
+                <!-- add button -->
+                <ng-container *ngIf="(user$ | async)">
+                    <button *ngIf="(user$ | async).isAdmin === 'true'" mat-fab routerLink="/tags/create" style="background: #333; position: fixed; bottom: 2rem; right: 2rem;">
+                        New
+                    </button>
+                </ng-container>
+
+                <!-- error -->
+                <div class="alert alert-dark text-center mt-5" role="alert" *ngIf="(getTagsError$ | async)">
+                    {{(getTagsError$ | async)}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

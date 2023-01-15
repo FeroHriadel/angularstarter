@@ -1,0 +1,51 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 d-flex flex-column align-items-center">
+            <!-- title and link -->
+            <h1 class="text-center mt-5">SIGN UP</h1>
+            <span class="mb-5 pointer">Have an account? <span style="color: #333; text-decoration: underline;" routerLink="/signin">Log in</span></span>
+
+            <!-- loader -->
+            <mat-spinner diameter="50" *ngIf="isLoading$ | async"></mat-spinner>
+
+            <!-- form -->
+            <form class="w-100 mb-3" *ngIf="!(isLoading$ | async)" [formGroup]="form" (submit)="onSubmit()">
+                <mat-form-field class="w-100">
+                    <mat-label>Email</mat-label>
+                    <input 
+                        type="email" 
+                        matInput 
+                        required 
+                        formControlName="email"
+                        [disabled]="disableForm"
+                    />
+                    <br /><mat-error *ngIf="form.get('email').invalid">Please enter a valid email</mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="w-100">
+                    <mat-label>Password</mat-label>
+                    <input 
+                        type="password" 
+                        matInput 
+                        required
+                        formControlName="password"
+                        [disabled]="disableForm"
+                    />
+                    <br /><mat-error *ngIf="form.get('password').invalid">Please enter a password</mat-error>
+                </mat-form-field>
+
+                <button [disabled]="disableForm" mat-stroked-button class="col-12 mt-3">Sign up</button>
+
+                <!-- error -->
+                <div class="alert alert-dark text-center w-100 mt-5" role="alert" *ngIf="(error$ | async)">
+                    {{(error$ | async)}}
+                </div>
+
+                <!-- success message -->
+                <div class="alert alert-dark text-center w-100 mt-5" role="alert" *ngIf="showSuccess">
+                    Thank you for signing up! Redirecting to login page...
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

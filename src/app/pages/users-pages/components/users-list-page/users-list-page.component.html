@@ -1,0 +1,80 @@
+<div class="container">
+    
+    <!-- page title -->
+    <h1 class="my-5 text-center">USERS PAGE</h1>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3 d-flex flex-column align-items-center">
+            <!-- spinner -->
+            <mat-spinner *ngIf="isLoading$ | async" diameter="50"></mat-spinner> <!-- Observables must come with `| async` pipe !!! -->
+
+            <!-- search by email -->
+            <form class="w-100 mb-5" *ngIf="!(isLoading$ | async)" [formGroup]="form" (submit)="searchByEmail()">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Search by email</mat-label>
+                    <input matInput type="text" formControlName="emailSearch"/>
+                    <button mat-icon-button matSuffix [disabled]="(isLoading$ | async)">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                </mat-form-field>
+            </form>
+            <br />
+
+            <!-- searched users -->
+            <div class="w-100" *ngIf="!(isLoading$ | async) && (searchedUsers$ | async) && form.value.emailSearch !== ''">
+                <h3 *ngIf="(searchedUsers$ | async)" class="text-center">RESULTS FOR "{{searchTerm}}"</h3>
+                <p class="text-center w-100 mb-5 pointer" style="font-size: 0.65rem;" (click)="clearSearch()">clear the search to stop searching</p>
+
+                <mat-selection-list class="w-100" [multiple]="false">
+                    <mat-list-option *ngFor="let searchedUser of (searchedUsers$ | async)">
+                        <div class="d-flex justify-content-between w-100">
+                            <p>{{searchedUser.email}}</p>
+                            <div>
+                                <mat-icon *ngIf="searchedUser && searchedUser.isAdmin === 'true'">perm_contact_calendar</mat-icon>
+                                <mat-icon *ngIf="searchedUser && searchedUser.isAdmin !== 'true'">face</mat-icon>
+                            </div>
+                        </div>
+                    </mat-list-option>
+                </mat-selection-list>
+            </div>
+
+            <!-- search more users btn -->
+            <button
+                *ngIf="(searchedUsersLastEvaluatedKey$ | async) && form.value.emailSearch !== '' "
+                mat-stroked-button 
+                [disabled]="(isLoading$ | async)"
+                class="w-100 mt-5 mb-5"
+                (click)="searchByEmail()"
+            >
+                Get more results
+            </button>
+
+            <!-- users list -->
+            <div class="w-100" *ngIf="!(isLoading$ | async) && (users$ | async) && form.value.emailSearch === ''">
+                <mat-selection-list class="w-100" [multiple]="false">
+                    <mat-list-option *ngFor="let user of (users$ | async)">
+                        <div class="d-flex justify-content-between w-100">
+                            <p>{{user.email}}</p>
+                            <div>
+                                <mat-icon *ngIf="user && user.isAdmin === 'true'">perm_contact_calendar</mat-icon>
+                                <mat-icon *ngIf="user && user.isAdmin !== 'true'">face</mat-icon>
+                            </div>
+                        </div>
+                    </mat-list-option>
+                </mat-selection-list>
+            </div>
+
+            <!-- Load more btn -->
+            <button
+                *ngIf="(LastEvaluatedKey$ | async) && form.value.emailSearch === '' "
+                mat-stroked-button 
+                [disabled]="(isLoading$ | async)"
+                class="w-100 mt-5 mb-5"
+                (click)="loadMoreUsers()"
+            >
+                Load More
+            </button>
+            
+        </div>
+    </div>
+</div>

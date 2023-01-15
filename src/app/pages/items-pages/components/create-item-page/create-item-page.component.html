@@ -1,0 +1,128 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 d-flex flex-column align-items-center">
+
+            <!-- title -->
+            <h1 class="text-center my-5">CREATE ITEM</h1>
+            
+            <!-- spinner -->
+            <mat-spinner *ngIf="(categoriesLoading$ | async) || (isLoading$ | async)" diameter="50"></mat-spinner>
+            
+            <!-- categories error -->
+            <div class="alert alert-dark text-center mt-5" role="alert" *ngIf="(categoriesError$ | async)">
+                {{(categoriesError$ | async)}}
+            </div>
+
+            <!-- tags error -->
+            <div class="alert alert-dark text-center mt-5" role="alert" *ngIf="(tagsError$ | async)">
+                {{(tagsError$ | async)}}
+            </div>
+
+            <!-- form -->
+            <form [formGroup]="form" class="w-100" (submit)="onSubmit()" *ngIf="(categories$ | async) && (tags$ | async) && !(isLoading$ | async)">
+                <!-- name -->
+                <mat-form-field class="w-100 mb-2">
+                    <mat-label>Name</mat-label>
+                    <input 
+                        type="text"
+                        required
+                        matInput
+                        [disabled]="isLoading$ | async"
+                        formControlName="name"
+                    >
+                    <br /> <mat-error *ngIf="form.get('name').invalid">Name is required</mat-error>
+                </mat-form-field>
+
+                <!-- description -->
+                <mat-form-field class="w-100 mb-2">
+                    <mat-label>Description</mat-label>
+                    <textarea
+                        matInput
+                        formControlName="description"
+                        [disabled]="isLoading$ | async"
+                    ></textarea>
+                </mat-form-field>
+
+                <!-- category -->
+                <mat-form-field class="w-100 mb-2">
+                    <mat-label>Category</mat-label>
+                    <mat-select formControlName="category" required>
+                      <mat-option>no category selected</mat-option>
+                      <mat-option *ngFor="let category of (categories$ | async)" [value]="category.id">
+                        {{category.name}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('category').invalid">Please choose a category</mat-error>
+                </mat-form-field>
+                
+                <!-- tags -->
+                <mat-label style="color:rgba(0, 0, 0, 0.54);">Tags</mat-label>
+                <div class="w-100 mb-5 d-flex justify-content-center" style="flex-wrap: wrap;">
+                    <div class="pointer m-2 main-tag-wrapper" *ngFor="let tag of (tags$ | async)" [id]="tag.id" style="border-radius: 50%;">
+                        <div class="d-flex align-items-center" (click)="toggleTag(tag.id)">
+                            <div 
+                                *ngIf="tag.imageUrl && tag.imageUrl !== ''" 
+                                class="tag-circle" 
+                                style="background: url({{tag.imageUrl}}) no-repeat center center/cover;">
+                            </div>
+                            <div 
+                                *ngIf="!tag.imageUrl || tag.imageUrl === ''" 
+                                class="tag-circle"
+                            >
+                                <span>{{tag.name}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- main image -->
+                <div *ngIf="mainImageDisplay" style="position: relative; width: 50px">
+                    <img [src]="mainImageDisplay"  class="mb-1" height="50" width="50" style="border-radius: 50%;"><br />
+                    <div class="remove-image-button pointer" (click)="removeMainImage()">
+                        <span>x</span>
+                    </div>
+                </div>
+
+                <label for="main-image-input" class="pointer w-100 mb-2 btn btn-dark">
+                    Upload Main Image
+                    <input 
+                        name="image-input"
+                        id="main-image-input"
+                        type="file"
+                        accept="image/*"
+                        (change)="onMainImageUpload($event)"
+                        class="w-100"
+                        hidden
+                    >
+                </label>
+
+                <!-- additional images -->
+                <div class="d-flex" style="flex-wrap: wrap;">
+                    <div *ngFor="let imageDisplay of imagesDisplays; let idx = index" style="position: relative; width: 50px" class="m-1">
+                        <img [src]="imageDisplay"  height="50" width="50" style="border-radius: 50%;"><br />
+                        <div class="remove-image-button pointer" (click)="removeImage(idx)">
+                            <span>x</span>
+                        </div>
+                    </div>
+                </div>
+
+                <label for="images-input" class="pointer w-100 mb-5 btn" style="background: #ddd">
+                    Upload Additional Images (max. 5)
+                    <input 
+                        name="images-input"
+                        id="images-input"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        (change)="onImagesUpload($event)"
+                        class="w-100"
+                        hidden
+                    >
+                </label>
+
+                <button mat-stroked-button type="submit" class="mt-2 mb-5 col-12" [disabled]="blockSubmit">Submit</button>
+            </form>
+
+        </div>
+    </div>
+</div>

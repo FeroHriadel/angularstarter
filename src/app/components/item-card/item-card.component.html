@@ -1,0 +1,38 @@
+<section class="card w-100 mb-3 item-card-wrapper" [routerLink]="['/items/' + item.id]">
+    
+    <!-- mainImage -->
+    <div class="item-card-main-image" *ngIf="item.mainImage" style="background: url({{item.mainImage}}) no-repeat center center/cover"></div>
+    <div class="item-card-main-image" *ngIf="!item.mainImage">
+        <h2 class="text-muted m-5">Item {{item.name}} has no image upload yet</h2>
+    </div>
+
+    <!-- card overlay-->
+    <div class="item-card-overlay pointer">
+        <!-- name -->
+        <h2 class="text-center w-100 item-card-name">{{item.name}}</h2>
+
+        <!-- category -->
+        <p> <small>{{item.category.name}}</small> </p>
+
+        <!-- tags -->
+        <div *ngIf="item.tags && item.tags.length" class="item-card-tags-wrapper w-100 d-flex justify-content-center" style="flex-wrap: wrap;">
+            <div *ngFor="let tag of item.tags" class="m-1">
+                <!-- either tag with image-->
+                <div 
+                    *ngIf="tag.imageUrl && tag.imageUrl !== ''" 
+                    class="tag-circle" 
+                    style="background: url({{tag.imageUrl}}) no-repeat center center/cover;">
+                </div>
+
+                <!-- or tag without image -->
+                <div 
+                    *ngIf="!tag.imageUrl || tag.imageUrl === ''" 
+                    class="tag-circle"
+                >
+                    <span>{{tag.name}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>

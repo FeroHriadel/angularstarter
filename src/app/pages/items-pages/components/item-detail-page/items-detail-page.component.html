@@ -1,0 +1,63 @@
+<div class="container">
+
+    <!-- loader -->
+    <div class="w-100 d-flex justify-content-center my-5">
+        <mat-spinner *ngIf="isLoading$ | async" diameter="50"></mat-spinner>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3 d-flex flex-column align-items-center">
+            
+            <!-- error -->
+            <div class="alert alert-dark text-center w-100 mt-5" role="alert" *ngIf="(error$ | async) && !(isLoading$ | async)">
+                Fetching item failed: {{(error$ | async)}}
+            </div>
+
+            <!-- item -->
+            <div class="w-100" *ngIf="(item$ | async) && !(isLoading$ | async)">
+                <!-- name -->
+                <h1 class="w-100 text-center">{{(item$ | async).name}}</h1>
+
+                <p class="w-100 text-center"><small>{{(item$ | async).user['email']}}</small></p>
+
+                <!-- category -->
+                <p class="w-100 text-center mb-3">{{(item$ | async).category.name}}</p>
+
+                <!-- tags -->
+                <div *ngIf="(item$ | async).tags && (item$ | async).tags.length" class="item-card-tags-wrapper w-100 d-flex justify-content-center mb-3" style="flex-wrap: wrap;">
+                    <div *ngFor="let tag of (item$ | async).tags" class="m-1">
+                        <!-- either tag with image-->
+                        <div 
+                            *ngIf="tag.imageUrl && tag.imageUrl !== ''" 
+                            class="tag-circle" 
+                            style="background: url({{tag.imageUrl}}) no-repeat center center/cover;">
+                        </div>
+        
+                        <!-- or tag without image -->
+                        <div 
+                            *ngIf="!tag.imageUrl || tag.imageUrl === ''" 
+                            class="tag-circle"
+                        >
+                            <span>{{tag.name}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- main image -->
+                <img *ngIf="(item$ | async).mainImage && (item$ | async).mainImage.length" [src]="(item$ | async).mainImage" class="w-100 mb-3">
+                <div class="w-100 d-flex justify-content-center align-items-center mb-3" *ngIf="!(item$ | async).mainImage" style="height: 300px; background: #aaa">
+                    <p>Item has no image yet</p>
+                </div>
+
+                <!-- description -->
+                <p *ngIf="(item$ | async).description" class="w-100 text-center mb-3">{{(item$ | async).description}}</p>
+
+                <div class="w-100" *ngIf="(item$ | async).images && (item$ | async).images.length">
+                    <img *ngFor="let image of (item$ | async).images" [src]="image" class="w-100 mb-3">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

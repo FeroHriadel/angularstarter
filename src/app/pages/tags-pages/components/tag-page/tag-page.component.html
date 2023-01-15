@@ -1,0 +1,76 @@
+<div class="container">
+
+    <!-- title -->
+    <h1 class="my-5 text-center">TAG PAGE</h1>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3 d-flex flex-column align-items-center">
+            <!-- loader -->
+            <mat-spinner *ngIf="isLoading$ | async" diameter="50"></mat-spinner>
+
+            <!-- form (admin only) -->
+            <form *ngIf="!(isLoading$ | async) && (currentTag$ | async) && (user$ | async) && (user$ | async).isAdmin === 'true'" class="w-100" [formGroup]="form" (submit)="onSubmit()">
+                <mat-form-field class="w-100 mb-2">
+                    <mat-label>Name</mat-label>
+                    <input 
+                        matInput 
+                        required
+                        formControlName="name"
+                        [disabled]="(isLoading$ | async)"
+                    />
+                    <br /><mat-error *ngIf="form.get('name').invalid">Tag name is required</mat-error>
+                </mat-form-field>
+
+                <div *ngIf="tagImage" style="position: relative; width: 50px">
+                    <img [src]="tagImage"  class="mb-1" height="50" width="50" style="border-radius: 50%;"><br />
+                    <div class="remove-image-button pointer" (click)="removeImage()">
+                        <span>x</span>
+                    </div>
+                </div>
+
+                <label for="image-input" class="pointer w-100 btn btn-dark">
+                    Upload Image
+                    <input 
+                        name="image-input"
+                        id="image-input"
+                        type="file"
+                        accept="image/*"
+                        (change)="onImageUpload($event)"
+                        class="w-100"
+                        hidden
+                    >
+                </label>
+                
+                <button [disabled]="(isLoading$ | async)" mat-stroked-button class="w-100 mt-2">Update</button>
+            </form>
+
+            <!-- get tag error -->
+            <div class="alert alert-dark text-center w-100 mt-5" role="alert" *ngIf="(getTagError$ | async)">
+                {{(getTagError$ | async)}}
+            </div>
+
+            <!-- details (non-admins) -->
+            <div 
+                class="w-100 card p-3 d-flex flex-column align-items-center" 
+                style="background: #ddd;" 
+                *ngIf="(!(isLoading$ | async) && (!(user$ | async) || (user$ | async).isAdmin!== 'true') && (currentTag$ | async))"
+            >
+                <h3 *ngIf="currentTag$ | async" class="text-center font-weight-bold">{{(currentTag$ | async).name | uppercase}}</h3>
+                <img 
+                    *ngIf="(currentTag$ | async) && (currentTag$ | async).imageUrl && (currentTag$ | async).imageUrl !== ''" 
+                    [src]="(currentTag$ | async).imageUrl"
+                    style="width: 260px; height: 260px; border-radius: 50%;"
+                >
+                <div 
+                    *ngIf="(currentTag$ | async) && (!(currentTag$ | async).imageUrl || (currentTag$ | async).imageUrl === '')"
+                    class="tag-circle" 
+                    style="width: 260px; height: 260px"
+                >
+                    <span style="font-size: 2rem">{{(currentTag$ | async).name}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>

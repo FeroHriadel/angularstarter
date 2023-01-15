@@ -1,0 +1,49 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 d-flex flex-column align-items-center">
+
+            <!-- title -->
+            <h1 class="text-center my-5">CREATE TAG</h1>
+            
+            <!-- spinner -->
+            <mat-spinner *ngIf="isLoading$ | async" diameter="50"></mat-spinner>
+
+            <!-- form -->
+            <form [formGroup]="form" class="w-100" (submit)="onSubmit()" *ngIf="!(isLoading$ | async)">
+                <mat-form-field class="w-100 mb-2">
+                    <mat-label>Name</mat-label>
+                    <input 
+                        type="text"
+                        required
+                        matInput
+                        formControlName="name"
+                    >
+                    <br /> <mat-error *ngIf="form.get('name').invalid">Name is required</mat-error>
+                </mat-form-field>
+
+                <div *ngIf="imageDisplay" style="position: relative; width: 50px">
+                    <img [src]="imageDisplay"  class="mb-1" height="50" width="50" style="border-radius: 50%;"><br />
+                    <div class="remove-image-button pointer" (click)="removeImage()">
+                        <span>x</span>
+                    </div>
+                </div>
+
+                <label for="image-input" class="pointer w-100 btn btn-dark">
+                    Upload Image
+                    <input 
+                        name="image-input"
+                        id="image-input"
+                        type="file"
+                        accept="image/*"
+                        (change)="onImageUpload($event)"
+                        class="w-100"
+                        hidden
+                    >
+                </label>
+
+                <button mat-stroked-button type="submit" class="mt-2 col-12">Submit</button>
+            </form>
+
+        </div>
+    </div>
+</div>

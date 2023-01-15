@@ -1,0 +1,120 @@
+<div class="container">
+    <!-- title -->
+    <h1 class="text-center my-5">ITEMS</h1>
+
+    <!-- filter, order & search -->
+    <div class="row mb-3">
+        <!-- category & tag filters -->
+        <div class="col-md-4 mb-1">
+            <mat-accordion>
+                <mat-expansion-panel hideToggle>
+        
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      Filter
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+        
+                  <div>
+                    <mat-form-field class="w-100 mb-2" *ngIf="categories$ | async">
+                      <mat-label>Category</mat-label>
+                      <mat-select [(value)]="selectedCategory" (valueChange)="filterByCategory()">
+                        <mat-option value="any">any category</mat-option>
+                        <mat-option *ngFor="let category of (categories$ | async)" [value]="category.id">
+                          {{category.name}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <p *ngIf="categoriesError$ | async">Categories failed to load</p>
+
+                    <mat-form-field class="w-100 mb-2" *ngIf="tags$ | async">
+                      <mat-label>Category</mat-label>
+                      <mat-select [(value)]="selectedTag" (valueChange)="filterByTag()">
+                        <mat-option value="any">any tag</mat-option>
+                        <mat-option *ngFor="let tag of (tags$ | async)" [value]="tag.id">
+                          {{tag.name}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <p *ngIf="categoriesError$ | async">Tags failed to load</p>
+                  </div>
+        
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+
+        <!-- name regex search -->
+        <div class="col-md-4 mb-1">
+            <mat-accordion>
+                <mat-expansion-panel hideToggle>
+        
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      Search
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+        
+                  <form class="w-100 mb-2" *ngIf="!(isLoading$ | async)" (submit)="searchByName($event)">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Search by name</mat-label>
+                        <input matInput type="text" name="name" />
+                        <button mat-icon-button matSuffix [disabled]="(isLoading$ | async)">
+                            <mat-icon>search</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </form>
+        
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+
+        <!-- order by date -->
+        <div class="col-md-4 mb-1">
+            <mat-accordion>
+                <mat-expansion-panel hideToggle>
+        
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      Order
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+        
+                  <div>
+                    <mat-form-field class="w-100 mb-2">
+                      <mat-label>Order by Creation Date</mat-label>
+                      <mat-select [(value)]="selectedDirection" (valueChange)="orderByDate()">
+                        <mat-option value="none">Not ordered</mat-option>
+                        <mat-option value="latest">Latest to Oldest</mat-option>
+                        <mat-option value="oldest">Oldest to Latest</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+        
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+    </div>
+
+    <!-- items wrapper -->
+    <div class="w-100">
+        <div class="row" *ngIf="items$ | async">
+            <div class="col-12" *ngFor="let item of (items$ | async)">
+                <app-item-card [item]="item"></app-item-card>
+            </div>
+        </div>
+
+        <p class="text-center" *ngIf="(items$ | async) && (items$ | async).length === 0">No items</p>
+    </div>
+
+    <!-- loader -->
+    <div class="w-100 d-flex justify-content-center">
+        <mat-spinner *ngIf="isLoading$ | async" diameter="50"></mat-spinner>
+    </div>
+    
+    <!-- add button -->
+    <ng-container *ngIf="(user$ | async)">
+        <button *ngIf="(user$ | async).isAdmin === 'true'" mat-fab routerLink="/items/create" style="background: #333; position: fixed; bottom: 2rem; right: 2rem;">
+            New
+        </button>
+    </ng-container>
+</div>
